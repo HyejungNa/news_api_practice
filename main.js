@@ -41,14 +41,14 @@ const openSearchBox = () => {
 
 const getLatestNews = async () => {
   // news api사용
-  const url = new URL(
-    `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
-  );
+  // const url = new URL(
+  //   `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
+  // );
 
   // 코딩누나 새 api 사용
-  // const url = new URL(
-  //   `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
-  // );
+  const url = new URL(
+    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
+  );
 
   const response = await fetch(url);
   const data = await response.json();
@@ -61,9 +61,17 @@ const getLatestNews = async () => {
 const getNewsByCategory = async (event) => {
   const category = event.target.textContent.toLowerCase();
   console.log(category);
+
+  // news api사용
+  // const url = new URL(
+  //   `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
+  // );
+
+  // 코딩누나 새 api 사용
   const url = new URL(
-    `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
+    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
   );
+
   const response = await fetch(url); // 비동기 호출
   const data = await response.json(); // 비동기 호출
 
@@ -75,9 +83,16 @@ const getNewsByKeyword = async () => {
   const keyword = document.getElementById('search-input').value;
   console.log('keyword', keyword);
 
+  // news api사용
+  // const url = new URL(
+  //   `https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`
+  // );
+
+  // 코딩누나 새 api 사용
   const url = new URL(
-    `https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`
+    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&country=us&q=${keyword}&apiKey=${API_KEY}`
   );
+
   const response = await fetch(url); // 비동기 호출
   const data = await response.json(); // 비동기 호출
   console.log('data', data);
