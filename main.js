@@ -1,5 +1,15 @@
 const API_KEY = 'c5878c7156124f3580df6afb2aad27a8';
 let newsList = [];
+const menus = document.querySelectorAll('.menus button');
+const sideMenuList = document.querySelectorAll('.side-menu-list');
+
+menus.forEach((menu) => {
+  menu.addEventListener('click', (event) => getNewsByCategory(event));
+});
+
+sideMenuList.forEach((sidemenu) => {
+  sidemenu.addEventListener('click', (event) => getNewsByCategory(event));
+});
 
 const openNav = () => {
   document.getElementById('mySidenav').style.width = '250px';
@@ -11,23 +21,34 @@ const closeNav = () => {
 
 const openSearchBox = () => {
   let inputArea = document.getElementById('input-area');
+  let searchInput = document.getElementById('search-input');
+
   if (inputArea.style.display === 'inline') {
     inputArea.style.display = 'none';
   } else {
     inputArea.style.display = 'inline';
+    searchInput.focus(); // 인풋창에 자동커서 focus 두기
   }
+
+  // 인풋창 입력후 검색시 엔터키 사용가능
+  searchInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter') {
+      getNewsByKeyword();
+      searchInput.value = ''; // 인풋창 비워주기
+    }
+  });
 };
 
 const getLatestNews = async () => {
   // news api사용
-  // const url = new URL(
-  //   `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
-  // );
+  const url = new URL(
+    `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
+  );
 
   // 코딩누나 새 api 사용
-  const url = new URL(
-    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
-  );
+  // const url = new URL(
+  //   `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
+  // );
 
   const response = await fetch(url);
   const data = await response.json();
@@ -35,6 +56,34 @@ const getLatestNews = async () => {
   newsList = data.articles;
   render();
   console.log(newsList);
+};
+
+const getNewsByCategory = async (event) => {
+  const category = event.target.textContent.toLowerCase();
+  console.log(category);
+  const url = new URL(
+    `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
+  );
+  const response = await fetch(url); // 비동기 호출
+  const data = await response.json(); // 비동기 호출
+
+  newsList = data.articles;
+  render();
+};
+
+const getNewsByKeyword = async () => {
+  const keyword = document.getElementById('search-input').value;
+  console.log('keyword', keyword);
+
+  const url = new URL(
+    `https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`
+  );
+  const response = await fetch(url); // 비동기 호출
+  const data = await response.json(); // 비동기 호출
+  console.log('data', data);
+
+  newsList = data.articles;
+  render();
 };
 
 const render = () => {
@@ -58,7 +107,7 @@ const render = () => {
                 ? news.description.substring(0, 200) + '...'
                 : news.description
             }</p>
-            <div>${news.source.name || 'no source'}  ${moment(
+            <div>${news.source.name || 'no source available'}  ${moment(
         news.publishedAt
       ).fromNow()}</div>
       </div>
