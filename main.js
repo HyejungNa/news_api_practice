@@ -19,7 +19,7 @@ let url = new URL(
 );
 
 const openNav = () => {
-  document.getElementById('mySidenav').style.width = '115px';
+  document.getElementById('mySidenav').style.width = '120px';
 };
 
 const closeNav = () => {
