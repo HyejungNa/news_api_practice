@@ -11,6 +11,7 @@ sideMenuList.forEach((sideMenu) => {
   sideMenu.addEventListener('click', (event) => getNewsByCategory(event));
 });
 
+// Base url
 let url = new URL(
   // news api사용
   // `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
@@ -76,7 +77,7 @@ const getLatestNews = async () => {
     `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
   );
 
-  getNews();
+  await getNews(); // 비동기 함수 호출 전에 await 사용
   // console.log(newsList);
 };
 
@@ -93,7 +94,7 @@ const getNewsByCategory = async (event) => {
     `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
   );
 
-  getNews();
+  await getNews(); // 비동기 함수 호출 전에 await 사용
 };
 
 const getNewsByKeyword = async () => {
@@ -109,7 +110,7 @@ const getNewsByKeyword = async () => {
     `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&country=us&q=${keyword}&apiKey=${API_KEY}`
   );
 
-  getNews();
+  await getNews(); // 비동기 함수 호출 전에 await 사용
 };
 
 const render = () => {
