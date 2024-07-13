@@ -87,6 +87,7 @@ const getLatestNews = async () => {
   url = new URL(
     `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
   );
+
   await getNews(); // 비동기 함수 호출 전에 await 사용
   // console.log(newsList);
 };
@@ -162,26 +163,35 @@ const errorRender = (errorMessage) => {
 };
 
 const paginationRender = () => {
+  let paginationHTML = '';
   const totalPages = Math.ceil(totalResults / pageSize);
-  const pageGroup = Math.ceil(page / groupSize); // 현재 페이지가 속한 페이지 그룹 (e.g. 현재페이지가 7이고 groupSize가 5이므로 7은 두번째 그룹에 속함)
-  let lastPage = pageGroup * groupSize; // 현재 페이지 그룹의 마지막 페이지 번호 (e.g. 현재 페이지가 두번쨰그룹(6~10)에 속한다면 lastPage는 10이됨)
-  // 밑에서 재할당해야하기에 let으로 선언하기
+  const pageGroup = Math.ceil(page / groupSize); // 현재 페이지가 속한 페이지 그룹 (e.g. 현재페이지가 7이고 groupSize가 5이면 7은 두번째 그룹에 속함)
+
+  let lastPage = pageGroup * 5; // 현재 페이지 그룹의 마지막 페이지 번호 (e.g. 현재 페이지가 두번쨰그룹(6~10)에 속한다면 lastPage는 10이됨), 밑에서 재할당해야하기에 let으로 선언하기
+  // 그룹 크기를 5로 고정해둠 (그룹크기가 항상 일정할시 고정된숫자사용도 괜찮음, 하지만 그룹크기를 동적으로 변경해야할경우 코드를 직접 수정해야함)
+  // let lastPage = pageGroup * groupSize; // 그룹 크기를 변수(groupSize)로 사용하여 더 유연하게 조절가능
+
   if (lastPage > totalPages) {
+    // 마지막 그룹이 5개이하일때
     lastPage = totalPages;
   }
-  const firstPage =
-    lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 현재 페이지 그룹의 첫번째 페이지 번호 (e.g. 현재페이지가 두번째그룹(6~10)에 속한다면 firstPage는 6이됨)
 
-  let paginationHTML = `
-      <li class="page-item" onClick='moveToPage(1)'>
-        <a class="page-link" href="#" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
-    <li class="page-item" onClick='moveToPage(${
+  const firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4; // 첫그룹이 5이하일때
+  // firstPage는 현재 페이지 그룹의 첫번째 페이지 번호 (e.g. 현재페이지가 두번째그룹(6~10)에 속한다면 firstPage는 6이됨)
+  // const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 그룹 크기를 변수(groupSize)로 사용하여 더 유연하게 조절가능
+
+  if (firstPage >= 6) {
+    paginationHTML = `
+  <li class="page-item" onClick='moveToPage(1)'>
+    <a class="page-link" href="#" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+<li class="page-item" onClick='moveToPage(${
       page - 1
     })'><a class="page-link" href="#"> &lt; </a></li>
-    `;
+`;
+  }
 
   for (let i = firstPage; i <= lastPage; i++) {
     paginationHTML += `<li class="page-item ${
@@ -189,14 +199,17 @@ const paginationRender = () => {
     }" onClick='moveToPage(${i})'><a class="page-link">${i}</a></li>`;
   }
 
-  paginationHTML += `<li class="page-item" onClick='moveToPage(${
-    page + 1
-  })'><a class="page-link" href="#"> &gt; </a></li>
-  <li class="page-item" onClick='moveToPage(${totalPages})'>
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>`;
+  if (lastPage < totalPages) {
+    paginationHTML += `<li class="page-item" onClick='moveToPage(${
+      page + 1
+    })'><a class="page-link" href="#"> &gt; </a></li>
+    <li class="page-item" onClick='moveToPage(${totalPages})'>
+        <a class="page-link" href="#" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>`;
+  }
+
   document.querySelector('.pagination').innerHTML = paginationHTML;
 };
 

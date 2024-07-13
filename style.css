@@ -119,6 +119,12 @@
   cursor: pointer;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+}
+
 @media screen and (max-width: 63rem) {
   .hide {
     display: inline;
