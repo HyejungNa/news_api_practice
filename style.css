@@ -115,6 +115,10 @@
   display: none;
 }
 
+.page-item {
+  cursor: pointer;
+}
+
 @media screen and (max-width: 63rem) {
   .hide {
     display: inline;
