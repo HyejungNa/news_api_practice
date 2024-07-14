@@ -11,13 +11,13 @@ sideMenuList.forEach((sideMenu) => {
   sideMenu.addEventListener('click', (event) => getNewsByCategory(event));
 });
 
-// Base url
-let url = new URL(
+const baseURL =
   // news api사용
   // `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
   // 코딩누나 새 api 사용
-  `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
-);
+  `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`;
+
+let url = new URL(baseURL);
 
 // Pagination
 let totalResults = 0; // 전체 데이터 결과의 수
@@ -78,32 +78,19 @@ const getNews = async () => {
 };
 
 const getLatestNews = async () => {
-  // news api사용
-  // url = new URL(
-  //   `https://newsapi.org/v2/top-headlines?country=us&apiKey=${API_KEY}`
-  // );
-
-  // 코딩누나 새 api 사용
-  url = new URL(
-    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines`
-  );
+  url = new URL(baseURL);
 
   await getNews(); // 비동기 함수 호출 전에 await 사용
   // console.log(newsList);
 };
 
 const getNewsByCategory = async (event) => {
+  page = 1; // 페이지를 1로 초기화
+
   const category = event.target.textContent.toLowerCase();
 
-  // news api사용
-  // url = new URL(
-  //   `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
-  // );
-
   // 코딩누나 새 api 사용
-  url = new URL(
-    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&category=${category}&apiKey=${API_KEY}`
-  );
+  url = new URL(`${baseURL}?category=${category}`);
 
   await getNews(); // 비동기 함수 호출 전에 await 사용
 };
@@ -111,15 +98,7 @@ const getNewsByCategory = async (event) => {
 const getNewsByKeyword = async () => {
   const keyword = document.getElementById('search-input').value;
 
-  // news api사용
-  // url = new URL(
-  //   `https://newsapi.org/v2/top-headlines?country=us&q=${keyword}&apiKey=${API_KEY}`
-  // );
-
-  // 코딩누나 새 api 사용
-  url = new URL(
-    `https://noona-times-be-5ca9402f90d9.herokuapp.com/top-headlines?country=us&country=us&q=${keyword}&apiKey=${API_KEY}`
-  );
+  url = new URL(`${baseURL}?q=${keyword}`);
 
   await getNews(); // 비동기 함수 호출 전에 await 사용
 };
@@ -176,11 +155,12 @@ const paginationRender = () => {
     lastPage = totalPages;
   }
 
-  const firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4; // 첫그룹이 5이하일때
+  const firstPage = lastPage - 4 <= 0 ? 1 : lastPage - 4; // 첫그룹이 5이하일때 (-4를 해주어 각 페이지 그룹의 첫번째 페이지 번호를 계산할수있다)
   // firstPage는 현재 페이지 그룹의 첫번째 페이지 번호 (e.g. 현재페이지가 두번째그룹(6~10)에 속한다면 firstPage는 6이됨)
   // const firstPage = lastPage - (groupSize - 1) <= 0 ? 1 : lastPage - (groupSize - 1); // 그룹 크기를 변수(groupSize)로 사용하여 더 유연하게 조절가능
 
-  if (firstPage >= 6) {
+  // 현재페이지가 1보다 클때는 전부 부호넣기
+  if (page > 1) {
     paginationHTML = `
   <li class="page-item" onClick='moveToPage(1)'>
     <a class="page-link" href="#" aria-label="Previous">
@@ -199,7 +179,8 @@ const paginationRender = () => {
     }" onClick='moveToPage(${i})'><a class="page-link">${i}</a></li>`;
   }
 
-  if (lastPage < totalPages) {
+  // 현재페이지가 마지막페이지보다 작을때는 전부 부호넣기
+  if (page < totalPages) {
     paginationHTML += `<li class="page-item" onClick='moveToPage(${
       page + 1
     })'><a class="page-link" href="#"> &gt; </a></li>
